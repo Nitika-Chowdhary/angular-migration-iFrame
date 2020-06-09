@@ -1,0 +1,14 @@
+<h1>Parent application</h1>
+<div class="label">Angular 9</div>
+<br>
+<h4 *ngIf="title">Data from iFrame: {{title}}</h4>
+<br>
+<div>
+  <a class="link" (click)="iFrameGoTo(1)">Open Screen 1</a>&nbsp;
+  <a class="link" (click)="iFrameGoTo(2)">Open Screen 2</a>
+  <br><br>
+  <input type="text" #data><button (click)="sendData(data.value)">Send data to iframe</button>
+</div>
+<br>
+
+<iframe #iframe class="iframe" src="http://127.0.0.1:8080/#/app1"></iframe>

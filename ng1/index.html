@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base href=".">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-route.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.8/angular-ui-router.min.js"></script>
+  <meta charset="utf-8">
+  <style>
+    .link {
+      cursor: pointer;
+      color: blue;
+    }
+
+    .label {
+      position: absolute;
+      right: 4px;
+      top: 4px;
+      font-weight: 600;
+      font-size: 18px;
+    }
+  </style>
+  <title>iFrame Application</title>
+</head>
+
+<body ng-app="ngSimpleApp">
+  <div class="label">AngularJS</div>
+
+  <div ui-view></div>
+  <script>
+    var app = angular.module('ngSimpleApp', ['ui.router'])
+      .controller("AController", ['$scope', '$location', '$state', function ($scope, $location, $state) {
+        $scope.username = 'Application 1';
+        $scope.sendData = function (e) {
+          window.parent.postMessage($scope.id, '*');
+        };
+        window.onmessage = function (e) {
+          $scope.info = e.data.info;
+          if (e.data.route === 'app2') {
+            $state.go('app2');
+          }
+          $scope.$apply();
+        };
+      }])
+      .controller("BController", ['$scope', '$location', '$state', function ($scope, $location, $state) {
+        $scope.username = 'Application 2';
+        window.onmessage = function (e) {
+          $scope.info = e.data.info;
+          if (e.data.route === 'app1') {
+            $state.go('app1');
+          }
+          $scope.$apply();
+        };
+      }]);
+
+    app.config(function ($stateProvider) {
+      var app1 = {
+        name: 'app1',
+        url: '/app1',
+        controller: 'AController',
+        templateUrl: 'app1.html'
+      };
+      var app2 = {
+        name: 'app2',
+        url: '/app2',
+        controller: 'BController',
+        templateUrl: 'app2.html'
+      };
+      $stateProvider.state(app1);
+      $stateProvider.state(app2);
+    });
+  </script>
+</body>
+
+</html>
